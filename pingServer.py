@@ -39,7 +39,8 @@ def ping_server(server_hostname):
     #execute ping command
     ping_response = subprocess.call(ping_command)
 
-    return ping_response
+    #return ping response as boolean. 0 (True) indicates successful ping, 1 (False) indicates unsucessful ping
+    return ping_response == 0
 
 result = ping_server(server_1_hostname)
 print(result)
