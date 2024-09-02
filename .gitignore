@@ -1,0 +1,8 @@
+#dotenv file
+.env
+
+#cache files
+__pycache__/
+
+#python test files
+Test.py
