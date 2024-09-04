@@ -6,20 +6,10 @@ from dotenv import dotenv_values, load_dotenv
 load_dotenv()
 ongoing_process_server_1 = os.getenv("server_1_ongoing_process_001")
 
-def process_status(process_name):
+def checkOngoingProcesses(processName):
 
-    check_process_command = ["pgrep", "-af", process_name]
+    process_check_command = ["ps aux | grep [m]ain.py | grep -v grep"]
 
-    try:
+    print(subprocess.check_output(process_check_command))
 
-        output = subprocess.check_output(check_process_command)
-
-        if output == 0:
-
-            print(f"{check_process_command} is running")
-
-    except subprocess.CalledProcessError as e:
-
-        print(e)
-
-process_status(ongoing_process_server_1)
+checkOngoingProcesses(ongoing_process_server_1)
