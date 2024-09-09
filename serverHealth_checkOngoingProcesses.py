@@ -1,26 +1,29 @@
+#!/usr/bin/env python3
 
+from serverHealth_builtComponents import listProcessesToBeChecked, checkOngoingProcesses, insertCheckOngoingProcessToDB
 
-from serverHealth_builtComponents import listProcessesToBeChecked, checkOngoingProcesses
+try:
 
+    retrieveprocesses = listProcessesToBeChecked()
 
-retrieveprocesses = listProcessesToBeChecked()
+    if retrieveprocesses[0] == 200:
 
-if retrieveprocesses[0] == 200:
+        listProcesses = retrieveprocesses[1]
 
-    listProcesses = retrieveprocesses[1]
+        for listProcess in listProcesses:
 
-    for listProcess in listProcesses:
+            processOngoing = checkOngoingProcesses(listProcess)
 
-        processOngoing = checkOngoingProcesses(listProcess)
+            if processOngoing == 200:
 
-        if processOngoing == 200:
+                processPassFail = "Pass"
 
-            print(f"{listProcess} is currently running")
+            elif processOngoing == 400:
 
-        elif processOngoing == 400:
+                processPassFail = "Fail"
 
-            print(f"{listProcess} is not running.")
+            insertCheckOngoingProcessToDB(listProcess, processPassFail)
 
-else:
-        
-    print(retrieveprocesses[0])
+except Exception as e:
+
+    print(e)
