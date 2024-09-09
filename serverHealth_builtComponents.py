@@ -1,7 +1,8 @@
 import os
 import subprocess
 import pandas as pd
-from sqlalchemy import create_engine
+import psycopg2
+from sqlalchemy import create_engine, insert
 from dotenv import dotenv_values, load_dotenv
 
 load_dotenv()
@@ -50,3 +51,35 @@ def checkOngoingProcesses(processName):
     except subprocess.CalledProcessError as e:
 
         return(400)
+    
+
+def insertCheckOngoingProcessToDB (processName, passOrFail):
+
+    conn = None
+    cursor = None
+
+    try:
+        
+        conn = psycopg2.connect(
+            database = db_database,
+            user = db_user,
+            password = db_password,
+            host = db_hostname,
+            port = db_port_id)
+        
+        cursor = conn.cursor()
+
+        insert_query = (f"INSERT INTO check_ongoing_processes (process_name, process_pass_fail) VALUES ('{processName}', '{passOrFail}')")
+        
+        cursor.execute(insert_query)
+
+        conn.commit()
+        
+    except Exception as e:
+        print(e)
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
