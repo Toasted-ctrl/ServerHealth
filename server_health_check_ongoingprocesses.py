@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from serverHealth_builtComponents import listProcessesToBeChecked, checkOngoingProcesses, insertCheckOngoingProcessToDB
+from server_health_builtcomponents import listProcessesToBeChecked, checkOngoingProcesses, insertCheckOngoingProcessToDB
 
 try:
 

@@ -83,3 +83,8 @@ def insertCheckOngoingProcessToDB (processName, passOrFail):
             cursor.close()
         if conn is not None:
             conn.close()
+
+def checkCPUTemperature():
+
+    shell_command_cpu_temperature = [f"vcgencmd measure_temp"]
+
