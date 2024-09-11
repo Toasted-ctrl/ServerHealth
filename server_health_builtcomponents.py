@@ -86,5 +86,17 @@ def insertCheckOngoingProcessToDB (processName, passOrFail):
 
 def checkCPUTemperature():
 
-    shell_command_cpu_temperature = [f"vcgencmd measure_temp"]
+    shell_command_cpu_temperature = ['vcgencmd', 'measure_temp']
 
+    try:
+        
+        shell_return = subprocess.check_output(shell_command_cpu_temperature).decode('utf-8')
+
+        temperature = shell_return.replace("temp=", "").replace("'C", "")
+        
+        return(200, temperature)
+
+
+    except subprocess.CalledProcessError as e:
+
+        return([400])
