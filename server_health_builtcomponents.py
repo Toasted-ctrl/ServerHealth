@@ -97,6 +97,25 @@ def checkCPUTemperature():
         return(200, temperature)
 
 
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
+
+        return([400])
+    
+
+def checkTotalSystemMemory():
+
+    try:
+
+        shell_command_memory_usage = [F"""less /proc/meminfo | grep MemTotal"""]
+        
+        shell_return = subprocess.check_output(shell_command_memory_usage, shell=True).decode('utf-8')
+
+        shell_return_cleaned = int(shell_return.replace("MemTotal:", "").replace(" kB", "").replace(" ", ""))
+
+        system_memory_total = shell_return_cleaned / 1.024
+
+        return(200, system_memory_total)
+
+    except subprocess.CalledProcessError:
 
         return([400])
