@@ -92,7 +92,7 @@ def checkCPUTemperature():
         
         shell_return = subprocess.check_output(shell_command_cpu_temperature).decode('utf-8')
 
-        cpu_temperature = shell_return.replace("temp=", "").replace("'C", "")
+        cpu_temperature = float(shell_return.replace("temp=", "").replace("'C", ""))
         
         return(200, cpu_temperature)
 
