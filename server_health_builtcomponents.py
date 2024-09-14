@@ -164,7 +164,7 @@ def insert_systemload_db(cpu_temperature_code, cpu_temperature, memory_type, mem
         
         cursor = conn.cursor()
 
-        insert_query = (f"INSERT INTO chek_system_load (cpu_temperature_code, cpu_temperature, memory_type, memory_total_code, memory_total, memory_available_code, memory_available, memory_free_code, memory_free) VALUES ('{cpu_temperature_code}', '{cpu_temperature}', '{memory_type}', '{memory_total_code}', '{memory_total}', '{memory_available_code}', '{memory_available}', '{memory_free_code}', '{memory_free}')")
+        insert_query = (f"INSERT INTO check_system_load (cpu_temperature_code, cpu_temperature, memory_type, memory_total_code, memory_total, memory_available_code, memory_available, memory_free_code, memory_free) VALUES ('{cpu_temperature_code}', '{cpu_temperature}', '{memory_type}', '{memory_total_code}', '{memory_total}', '{memory_available_code}', '{memory_available}', '{memory_free_code}', '{memory_free}')")
         
         cursor.execute(insert_query)
 
