@@ -84,7 +84,7 @@ def insertCheckOngoingProcessToDB (processName, passOrFail):
         if conn is not None:
             conn.close()
 
-def checkCPUTemperature():
+def check_system_cpu_temperature():
 
     try:
 
@@ -100,20 +100,49 @@ def checkCPUTemperature():
 
         return([400])
     
-
-def checkTotalSystemMemory():
+def check_system_memory_total():
 
     try:
 
-        shell_command_memory_usage = [F"""less /proc/meminfo | grep MemTotal"""]
+        shell_command_check_memory_total = [F"""less /proc/meminfo | grep MemTotal"""]
         
-        shell_return = subprocess.check_output(shell_command_memory_usage, shell=True).decode('utf-8')
+        shell_return_check_memory_total = subprocess.check_output(shell_command_check_memory_total, shell=True).decode('utf-8')
 
-        shell_return_cleaned = int(shell_return.replace("MemTotal:", "").replace(" kB", "").replace(" ", ""))
-
-        system_memory_total = shell_return_cleaned / 1.024
+        system_memory_total = int(shell_return_check_memory_total.replace("MemTotal:", "").replace(" kB", "").replace(" ", ""))
 
         return(200, system_memory_total)
+
+    except subprocess.CalledProcessError:
+
+        return([400])
+    
+def check_system_memory_available():
+
+    try:
+
+        shell_command_check_memory_available = [F"""less /proc/meminfo | grep MemAvailable"""]
+        
+        shell_return_check_memory_available = subprocess.check_output(shell_command_check_memory_available, shell=True).decode('utf-8')
+
+        system_memory_available = int(shell_return_check_memory_available.replace("MemAvailable:", "").replace(" kB", "").replace(" ", ""))
+
+        return(200, system_memory_available)
+
+    except subprocess.CalledProcessError:
+
+        return([400])
+    
+def check_system_memory_free():
+
+    try:
+
+        shell_command_check_memory_free = [F"""less /proc/meminfo | grep MemFree"""]
+        
+        shell_return_check_memory_free = subprocess.check_output(shell_command_check_memory_free, shell=True).decode('utf-8')
+
+        system_memory_free = int(shell_return_check_memory_free.replace("MemFree:", "").replace(" kB", "").replace(" ", ""))
+
+        return(200, system_memory_free)
 
     except subprocess.CalledProcessError:
 
