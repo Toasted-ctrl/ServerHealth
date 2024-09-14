@@ -147,3 +147,34 @@ def check_system_memory_free():
     except subprocess.CalledProcessError:
 
         return([400])
+    
+def insert_systemload_db(cpu_temperature_code, cpu_temperature, memory_type, memory_total_code, memory_total, memory_available_code, memory_available, memory_free_code, memory_free):
+
+    conn = None
+    cursor = None
+
+    try:
+        
+        conn = psycopg2.connect(
+            database = db_database,
+            user = db_user,
+            password = db_password,
+            host = db_hostname,
+            port = db_port_id)
+        
+        cursor = conn.cursor()
+
+        insert_query = (f"INSERT INTO chek_system_load (cpu_temperature_code, cpu_temperature, memory_type, memory_total_code, memory_total, memory_available_code, memory_available, memory_free_code, memory_free) VALUES ('{cpu_temperature_code}', '{cpu_temperature}', '{memory_type}', '{memory_total_code}', '{memory_total}', '{memory_available_code}', '{memory_available}', '{memory_free_code}', '{memory_free}')")
+        
+        cursor.execute(insert_query)
+
+        conn.commit()
+        
+    except Exception as e:
+        print(e)
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
