@@ -1,4 +1,4 @@
-from server_health_builtcomponents import check_system_cpu_temperature, check_system_memory_free, check_system_memory_available, check_system_memory_total
+from server_health_builtcomponents import check_system_cpu_temperature, check_system_memory_free, check_system_memory_available, check_system_memory_total, insert_systemload_db
 
 system_memory_type = "Kibibyte"
 
@@ -34,9 +34,10 @@ if system_memory_free[0] == 400:
 elif system_memory_free[0] == 200:
     memory_free = system_memory_free[1]
 
-#check
-print(system_cpu_temperature[0], cpu_temperature,
-      system_memory_type,
-      system_memory_total[0], memory_total,
-      system_memory_available[0], memory_available,
-      system_memory_free[0], memory_free)
+try:
+
+    insert_systemload_db(system_cpu_temperature[0], cpu_temperature, system_memory_type, system_memory_total[0], memory_total, system_memory_available[0], memory_available, system_memory_free[0], memory_free)
+
+except Exception as error_on_runnin_system_check:
+
+    print(f"Error: {error_on_runnin_system_check}")
