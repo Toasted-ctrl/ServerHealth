@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from server_health_builtcomponents import check_system_cpu_temperature, check_system_memory_free, check_system_memory_available, check_system_memory_total, insert_systemload_db
 
 system_memory_type = "Kibibyte"
