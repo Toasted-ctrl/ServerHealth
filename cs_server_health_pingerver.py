@@ -1,46 +1,39 @@
-import os
-import platform
-import subprocess
-import datetime
-from dotenv import dotenv_values, load_dotenv
+#!/usr/bin/env python3
 
-#determine platform
-local_platform = platform.system()
+from cs_server_health_builtcomponents import ping_server, retrieve_host_machines_ip_addresses, store_ping_response
 
-#load dotenv objects (server hostnames)
-load_dotenv()
-server_1_hostname = os.getenv("server_1_hostname")
-server_2_hostname = os.getenv("server_2_hostname")
+try:
 
-#ping function
-def ping_server(server_hostname):
+    ip_address_retrieval = retrieve_host_machines_ip_addresses()
 
-    #create datetime timestamp for inclusion into ping report
-    ping_timestamp = datetime.datetime.now()
-    print(ping_timestamp)
+    if ip_address_retrieval[0] == 200:
+        
+        ip_addresses = ip_address_retrieval[1]
 
-    #determine parameter for ping based on OS. Windows OS = -n, UNIX = -c
-    if local_platform.lower() == "windows":
+        for ip_address in ip_addresses:
 
-        subprocess_parameter = "-n"
+            cleaned_ip_address = ip_address.replace("/32", "")
 
-    else:
+            server_response = ping_server(cleaned_ip_address)
 
-        print("UNIX machine")
+            if server_response == True:
 
-        subprocess_parameter = "-c"
+                ping_pass_fail = "PASS"
 
-    #command line ping Windows: ping -n 1 <hostname>
-    #command line ping UNIX: ping -c 1 <hostname>
+            if server_response == False:
 
-    #create ping command based on operating system
-    ping_command = ["ping", subprocess_parameter, "1", server_hostname]
+                ping_pass_fail = "FAIL"
 
-    #execute ping command
-    ping_response = subprocess.call(ping_command)
+            try:
 
-    #return ping response as boolean. 0 (True) indicates successful ping, 1 (False) indicates unsucessful ping
-    return ping_response == 0
+                store_ping_response(ip_address, ping_pass_fail)
 
-result = ping_server(server_1_hostname)
-print(result)
+            except Exception as e:
+
+                print(f"Error: {e}")
+
+    elif ip_address_retrieval[0] == 400:
+        print(f"No IP addresses in table.")
+
+except Exception as e:
+    print(f"Error: {e}")
