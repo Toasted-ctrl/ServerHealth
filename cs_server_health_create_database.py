@@ -31,6 +31,21 @@ if table_1_check == False:
     class list_localhost_ongoing_processes(Base):
         __tablename__ = table_1_name
         server_name = Column(String(30), primary_key=True, nullable=False)
-        server_ip_address_IPv4 = Column(CIDR, unique=True)
+        server_ip_address = Column(CIDR, unique=True)
+
+    Base.metadata.create_all(engine)
+
+table_2_name = "check_ping_response"
+table_2_check = inspection.has_table(table_2_name)
+
+if table_2_check == False:
+    print(f"'{table_2_name}' = missing, attempting to create table.")
+
+    class list_localhost_ongoing_processes(Base):
+        __tablename__ = table_2_name
+        id = Column(BigInteger, primary_key=True, nullable=False)
+        timestamp_log = Column(DateTime(timezone=False), server_default=func.now())
+        server_ip_address = Column(CIDR, nullable=False)
+        ping_pass_fail = Column(String(4), nullable=False)
 
     Base.metadata.create_all(engine)
