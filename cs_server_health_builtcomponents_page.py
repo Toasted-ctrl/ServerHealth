@@ -18,7 +18,7 @@ engine = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_passwor
 
 def display_last_ping_response(ip_address):
 
-    sql_retrieve_last_ping_status = "SELECT timestamp_log, ping_pass_fail FROM check_ping_response ORDER BY timestamp_log DESC LIMIT 1"
+    sql_retrieve_last_ping_status = (f"SELECT timestamp_log, ping_pass_fail FROM check_ping_response WHERE server_ip_address = '{ip_address}' ORDER BY timestamp_log DESC LIMIT 1")
 
     last_ping_response_df = pd.read_sql(sql=sql_retrieve_last_ping_status, con=engine)
 
@@ -33,3 +33,17 @@ def display_last_ping_response(ip_address):
         ping_pass_fail = last_ping_response_df.iloc[0]['ping_pass_fail']
 
     return (timestamp_log, ping_pass_fail)
+
+def retrieve_server_identities():
+
+    sql_retrieve_server_identities = "SELECT * FROM server_identities"
+
+    server_identities_df = pd.read_sql(sql=sql_retrieve_server_identities, con=engine)
+
+    if server_identities_df.empty:
+
+        return([400])
+    
+    elif not server_identities_df.empty:
+
+        return(200, server_identities_df.shape[0], server_identities_df)
