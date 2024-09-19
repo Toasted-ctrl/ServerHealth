@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import datetime
-from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities
+from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities, retrieve_remote_server_credentials, retrieve_server_systemload
 
 #page title
 st.set_page_config(page_title="This is my first page")
@@ -43,5 +43,38 @@ def create_list_active_servers():
 
             st.text(f"Last ping timestamp: {server_last_ping_timestamp}")
             st.text(f"Last ping status: {server_last_ping_status}")
+
+            st.subheader(f"Server systemload during the last 24 hours")
+
+            remote_server_credentials = retrieve_remote_server_credentials(server_ip_address, 'serverhealth_logs')
+
+            if remote_server_credentials[0] == 400:
+
+                st.text(f"Error, cannot display system load: Missing credentials.")
+
+            elif remote_server_credentials[0] == 200:
+
+                remote_server_ip_address = remote_server_credentials[1]
+                remote_server_username = remote_server_credentials[2]
+                remote_server_password = remote_server_credentials[3]
+                remote_server_port = remote_server_credentials[4]
+
+                remote_server_system_load = retrieve_server_systemload(remote_server_ip_address, remote_server_username, remote_server_password, 'serverhealth_logs', remote_server_port)
+
+                if remote_server_system_load[0] == 400:
+
+                    st.text(f"Error, cannot display system load: Missing system logs.")
+
+                elif remote_server_system_load[0] == 404:
+
+                    st.text(f"Error, cannot display system load: Unexpected error.")
+
+                elif remote_server_system_load[0] == 200:
+
+                    st.text(f"Number of entries: {remote_server_system_load[1]}")
+                    st.text(f"Average CPU temperature: {remote_server_system_load[3]} (Max: {remote_server_system_load[2]})")
+                    st.text(f"System memory, total: {remote_server_system_load[5]}")
+                    st.text(f"System memory, available: {remote_server_system_load[7]} (Max: {remote_server_system_load[6]})")
+                    st.text(f"System memory, free: {remote_server_system_load[9]} (Max: {remote_server_system_load[8]})")
 
 create_list_active_servers()
