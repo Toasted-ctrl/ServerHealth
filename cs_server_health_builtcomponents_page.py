@@ -16,7 +16,6 @@ db_method_db = os.getenv("db_method_db")
 db_method_conn = os.getenv("db_method_conn")
 
 engine_local = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_password}@{db_hostname}:{db_port_id}/{db_database}")
-engine_remote = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_password}@{db_hostname}:{db_port_id}/{db_database}")
 
 def display_last_ping_response(ip_address):
 
