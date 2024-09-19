@@ -67,4 +67,8 @@ def retrieve_server_systemload(remote_hostname, remote_username, remote_password
     
     elif not server_system_load_df.empty:
 
-        return(200, server_system_load_df.shape[0], server_system_load_df)
+        return(200, server_system_load_df.shape[0],
+               server_system_load_df['cpu_temperature'].max(), round(server_system_load_df['cpu_temperature'].mean(), 1),
+               server_system_load_df['memory_total'].max(), int(server_system_load_df['memory_total'].mean()),
+               server_system_load_df['memory_available'].max(), int(server_system_load_df['memory_available'].mean()),
+               server_system_load_df['memory_free'].max(), int(server_system_load_df['memory_free'].mean()))
