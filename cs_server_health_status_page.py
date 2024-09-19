@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import datetime
-import os
 from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities
 
 #page title
