@@ -77,3 +77,21 @@ def retrieve_server_systemload(remote_hostname, remote_username, remote_password
     except:
 
         return([404])
+    
+def retrieve_remote_server_credentials(ip_address, database):
+
+    sql_retrieve_remote_server_credentials = (f"SELECT * FROM server_database_credentials WHERE server_ip_address = '{ip_address}' AND server_database = '{database}'")
+
+    retrieve_remote_server_credentials_df = pd.read_sql(sql=sql_retrieve_remote_server_credentials, con=engine_local)
+
+    if retrieve_remote_server_credentials_df.empty:
+
+        return([400])
+
+    elif not retrieve_remote_server_credentials_df.empty:
+
+        return(200,
+              retrieve_remote_server_credentials_df.iloc[0]['server_ip_address_text'],
+              retrieve_remote_server_credentials_df.iloc[0]['server_username'],
+              retrieve_remote_server_credentials_df.iloc[0]['server_password'],
+              retrieve_remote_server_credentials_df.iloc[0]['server_port'])
