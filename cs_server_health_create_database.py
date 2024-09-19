@@ -49,3 +49,21 @@ if table_2_check == False:
         ping_pass_fail = Column(String(4), nullable=False)
 
     Base.metadata.create_all(engine)
+
+table_3_name = "server_database_credentials"
+table_3_check = inspection.has_table(table_3_name)
+
+if table_3_check == False:
+    print(f"'{table_3_name}' = missing, attempting to create table.")
+
+    class list_localhost_ongoing_processes(Base):
+        __tablename__ = table_3_name
+        timestamp_added = Column(DateTime(timezone=False), server_default=func.now())
+        server_ip_address = Column(CIDR, primary_key=True, nullable=False)
+        server_ip_address_text = Column(String(15), nullable=False)
+        server_database = Column(String(25), primary_key=True, nullable=False)
+        server_username = Column(String(10), nullable=False)
+        server_password = Column(String(30), nullable=False)
+        server_port = Column(Integer, nullable=False)
+
+    Base.metadata.create_all(engine)
