@@ -49,25 +49,31 @@ def retrieve_server_identities():
 
         return(200, server_identities_df.shape[0], server_identities_df)
     
-def retrieve_server_systemload(remote_hostname, remote_username, remote_password):
+def retrieve_server_systemload(remote_hostname, remote_username, remote_password, remote_database, remote_port):
 
-    engine_remote = create_engine(f"{db_method_db}+{db_method_conn}://{remote_username}:{remote_password}@{remote_hostname}:{db_port_id}/{db_database}")
+    try:
 
-    current_date = datetime.datetime.now()
-    prior_date = datetime.datetime.now() + timedelta(days=-1)
+        engine_remote = create_engine(f"{db_method_db}+{db_method_conn}://{remote_username}:{remote_password}@{remote_hostname}:{remote_port}/{remote_database}")
 
-    sql_retrieve_server_systemload = (f"SELECT * FROM check_system_load WHERE timestamp_log <= '{current_date}' AND timestamp_log >= '{prior_date}' ORDER BY timestamp_log DESC")
+        current_date = datetime.datetime.now()
+        prior_date = datetime.datetime.now() + timedelta(days=-1)
 
-    server_system_load_df = pd.read_sql(sql=sql_retrieve_server_systemload, con=engine_remote)
+        sql_retrieve_server_systemload = (f"SELECT * FROM check_system_load WHERE timestamp_log <= '{current_date}' AND timestamp_log >= '{prior_date}' ORDER BY timestamp_log DESC")
 
-    if server_system_load_df.empty:
+        server_system_load_df = pd.read_sql(sql=sql_retrieve_server_systemload, con=engine_remote)
 
-        return([400])
-    
-    elif not server_system_load_df.empty:
+        if server_system_load_df.empty:
 
-        return(200, server_system_load_df.shape[0],
-               server_system_load_df['cpu_temperature'].max(), round(server_system_load_df['cpu_temperature'].mean(), 1),
-               server_system_load_df['memory_total'].max(), int(server_system_load_df['memory_total'].mean()),
-               server_system_load_df['memory_available'].max(), int(server_system_load_df['memory_available'].mean()),
-               server_system_load_df['memory_free'].max(), int(server_system_load_df['memory_free'].mean()))
+            return([400])
+        
+        elif not server_system_load_df.empty:
+
+            return(200, server_system_load_df.shape[0],
+                server_system_load_df['cpu_temperature'].max(), round(server_system_load_df['cpu_temperature'].mean(), 1),
+                server_system_load_df['memory_total'].max(), int(server_system_load_df['memory_total'].mean()),
+                server_system_load_df['memory_available'].max(), int(server_system_load_df['memory_available'].mean()),
+                server_system_load_df['memory_free'].max(), int(server_system_load_df['memory_free'].mean()))
+        
+    except:
+
+        return([404])
