@@ -77,4 +77,8 @@ def create_list_active_servers():
                     st.text(f"System memory, available: {remote_server_system_load[7]} (Max: {remote_server_system_load[6]})")
                     st.text(f"System memory, free: {remote_server_system_load[9]} (Max: {remote_server_system_load[8]})")
 
+            st.subheader(f"Running services")
+
+            st.subheader(f"API calls/data loads")
+
 create_list_active_servers()
