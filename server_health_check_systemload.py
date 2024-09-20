@@ -36,6 +36,7 @@ if system_memory_free[0] == 400:
 elif system_memory_free[0] == 200:
     memory_free = system_memory_free[1]
 
+#try inserting system stats into db
 try:
 
     insert_systemload_db(system_cpu_temperature[0], cpu_temperature, system_memory_type, system_memory_total[0], memory_total, system_memory_available[0], memory_available, system_memory_free[0], memory_free)

@@ -4,14 +4,18 @@ from server_health_builtcomponents import listProcessesToBeChecked, checkOngoing
 
 try:
 
+    #retrieve processes that should be running at all times
     retrieveprocesses = listProcessesToBeChecked()
 
     if retrieveprocesses[0] == 200:
 
+        #create list of processes if response to listProcessesToBeChecked is 200
         listProcesses = retrieveprocesses[1]
 
+        #for every processes in list, try below
         for listProcess in listProcesses:
 
+            #call checkOngoingProcesses to check if process is running
             processOngoing = checkOngoingProcesses(listProcess)
 
             if processOngoing == 200:
@@ -22,6 +26,7 @@ try:
 
                 processPassFail = "Fail"
 
+            #insert result into db
             insertCheckOngoingProcessToDB(listProcess, processPassFail)
 
 except Exception as e:

@@ -6,6 +6,8 @@ from sqlalchemy import create_engine
 from datetime import timedelta
 from dotenv import load_dotenv, dotenv_values
 
+
+#import dotenv values
 load_dotenv()
 db_database = os.getenv("db_database")
 db_password = os.getenv("db_password")
@@ -15,8 +17,10 @@ db_user = os.getenv("db_user")
 db_method_db = os.getenv("db_method_db")
 db_method_conn = os.getenv("db_method_conn")
 
+#create engine to retrieve data from local db
 engine_local = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_password}@{db_hostname}:{db_port_id}/{db_database}")
 
+#function to retrieve last ping status for provided ip address
 def display_last_ping_response(ip_address):
 
     sql_retrieve_last_ping_status = (f"SELECT timestamp_log, ping_pass_fail FROM check_ping_response WHERE server_ip_address = '{ip_address}' ORDER BY timestamp_log DESC LIMIT 1")
@@ -35,6 +39,7 @@ def display_last_ping_response(ip_address):
 
     return (timestamp_log, ping_pass_fail)
 
+#function to retrieve server identities (name +  IPv4 CIDR address)
 def retrieve_server_identities():
 
     sql_retrieve_server_identities = "SELECT * FROM server_identities"
@@ -48,11 +53,13 @@ def retrieve_server_identities():
     elif not server_identities_df.empty:
 
         return(200, server_identities_df.shape[0], server_identities_df)
-    
+
+#function to retrieve systemload details of remote server
 def retrieve_server_systemload(remote_hostname, remote_username, remote_password, remote_database, remote_port):
 
     try:
 
+        #create engine based on function call arguments
         engine_remote = create_engine(f"{db_method_db}+{db_method_conn}://{remote_username}:{remote_password}@{remote_hostname}:{remote_port}/{remote_database}")
 
         current_date = datetime.datetime.now()
@@ -68,6 +75,7 @@ def retrieve_server_systemload(remote_hostname, remote_username, remote_password
         
         elif not server_system_load_df.empty:
 
+            #if DataFrame not empty, return average and max system load stats
             return(200, server_system_load_df.shape[0],
                 server_system_load_df['cpu_temperature'].max(), round(server_system_load_df['cpu_temperature'].mean(), 1),
                 server_system_load_df['memory_total'].max(), int(server_system_load_df['memory_total'].mean()),
@@ -77,7 +85,8 @@ def retrieve_server_systemload(remote_hostname, remote_username, remote_password
     except:
 
         return([404])
-    
+
+#retrieve credentials of remote servers for retrieving system load stats, cronjobs and running services
 def retrieve_remote_server_credentials(ip_address, database):
 
     sql_retrieve_remote_server_credentials = (f"SELECT * FROM server_database_credentials WHERE server_ip_address = '{ip_address}' AND server_database = '{database}'")

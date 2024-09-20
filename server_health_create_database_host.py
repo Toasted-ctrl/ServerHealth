@@ -5,6 +5,7 @@ from sqlalchemy import Column, Integer, String, BigInteger, DateTime, Date, Floa
 from dotenv import dotenv_values, load_dotenv
 import os
 
+#import dotenv values
 load_dotenv()
 
 db_database = os.getenv("db_database")
@@ -15,12 +16,15 @@ db_user = os.getenv("db_user")
 db_method_db = os.getenv("db_method_db")
 db_method_conn = os.getenv("db_method_conn")
 
+#create engine to connect to db
 engine = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_password}@{db_hostname}:{db_port_id}/{db_database}")
 
+#inspect database using engine to check for table presence
 inspection = inspect(engine)
 
 Base = declarative_base()
 
+#block to create first table required
 table_1_name = "list_localhost_ongoing_processes"
 table_1_check = inspection.has_table(table_1_name)
 
@@ -37,6 +41,7 @@ if table_1_check == False:
 table_2_name = "check_ongoing_processes"
 table_2_check = inspection.has_table(table_2_name)
 
+#block to create second table required
 if table_2_check == False:
     print(f"'{table_2_name}' = missing, attempting to create table.")
 
@@ -49,6 +54,7 @@ if table_2_check == False:
 
     Base.metadata.create_all(engine)
 
+#block to create third table required
 table_3_name = "check_system_load"
 table_3_check = inspection.has_table(table_3_name)
 

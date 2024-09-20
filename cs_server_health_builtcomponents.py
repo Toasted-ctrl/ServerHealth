@@ -50,6 +50,7 @@ def ping_server(server_hostname):
     #return ping response as boolean. 0 (True) indicates successful ping, 1 (False) indicates unsucessful ping
     return ping_response == 0
 
+#function to retrieve ip addresses of remote servers
 def retrieve_host_machines_ip_addresses():
 
     sql_retrieve_ip_address = "SELECT server_ip_address FROM server_identities"
@@ -65,7 +66,8 @@ def retrieve_host_machines_ip_addresses():
         ip_address_list = ip_address_df['server_ip_address'].to_list()
 
         return(200, ip_address_list)
-    
+
+#function to store ping response
 def store_ping_response(ip_address, ping_response):
 
     conn = None

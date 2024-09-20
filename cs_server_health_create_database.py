@@ -6,6 +6,7 @@ from sqlalchemy.dialects.postgresql import CIDR
 from dotenv import dotenv_values, load_dotenv
 import os
 
+#import dotenv values
 load_dotenv()
 
 db_database = os.getenv("db_database")
@@ -16,12 +17,14 @@ db_user = os.getenv("db_user")
 db_method_db = os.getenv("db_method_db")
 db_method_conn = os.getenv("db_method_conn")
 
+#create engine to connect to db
 engine = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_password}@{db_hostname}:{db_port_id}/{db_database}")
 
 inspection = inspect(engine)
 
 Base = declarative_base()
 
+#create first required table
 table_1_name = "server_identities"
 table_1_check = inspection.has_table(table_1_name)
 
@@ -35,6 +38,7 @@ if table_1_check == False:
 
     Base.metadata.create_all(engine)
 
+#create second required table
 table_2_name = "check_ping_response"
 table_2_check = inspection.has_table(table_2_name)
 
@@ -50,6 +54,7 @@ if table_2_check == False:
 
     Base.metadata.create_all(engine)
 
+#create third required table
 table_3_name = "server_database_credentials"
 table_3_check = inspection.has_table(table_3_name)
 

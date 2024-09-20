@@ -5,6 +5,7 @@ import psycopg2
 from sqlalchemy import create_engine, insert
 from dotenv import dotenv_values, load_dotenv
 
+#import dotenv values
 load_dotenv()
 
 db_database = os.getenv("db_database")
@@ -15,8 +16,10 @@ db_port_id = os.getenv("db_port_id")
 db_method_db = os.getenv("db_method_db")
 db_method_conn = os.getenv("db_method_conn")
 
+#create engine to connect to db
 engine = create_engine(f"{db_method_db}+{db_method_conn}://{db_user}:{db_password}@{db_hostname}:{db_port_id}/{db_database}")
 
+#function to retrieve list of procceses that require checking
 def listProcessesToBeChecked():
 
     retrieveProcesses_sql = str(f"SELECT process_name FROM list_localhost_ongoing_processes")
@@ -37,7 +40,7 @@ def listProcessesToBeChecked():
 
         return ([404])
     
-
+#function to check if process is currently running
 def checkOngoingProcesses(processName):
 
     process_check_command = [f"""ps aux | grep {processName} | grep -v grep"""]
@@ -51,8 +54,8 @@ def checkOngoingProcesses(processName):
     except subprocess.CalledProcessError as e:
 
         return(400)
-    
 
+#function to insert process check into db
 def insertCheckOngoingProcessToDB (processName, passOrFail):
 
     conn = None
@@ -84,6 +87,7 @@ def insertCheckOngoingProcessToDB (processName, passOrFail):
         if conn is not None:
             conn.close()
 
+#function to check cpu temperature
 def check_system_cpu_temperature():
 
     try:
@@ -99,7 +103,8 @@ def check_system_cpu_temperature():
     except subprocess.CalledProcessError:
 
         return([400])
-    
+
+#function to check total system memory
 def check_system_memory_total():
 
     try:
@@ -115,7 +120,8 @@ def check_system_memory_total():
     except subprocess.CalledProcessError:
 
         return([400])
-    
+
+#function to check total available memory
 def check_system_memory_available():
 
     try:
@@ -131,7 +137,8 @@ def check_system_memory_available():
     except subprocess.CalledProcessError:
 
         return([400])
-    
+
+#function to check total free memory
 def check_system_memory_free():
 
     try:
@@ -147,7 +154,8 @@ def check_system_memory_free():
     except subprocess.CalledProcessError:
 
         return([400])
-    
+
+#function to insert system load details into db
 def insert_systemload_db(cpu_temperature_code, cpu_temperature, memory_type, memory_total_code, memory_total, memory_available_code, memory_available, memory_free_code, memory_free):
 
     conn = None
