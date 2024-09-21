@@ -76,3 +76,19 @@ if table_3_check == False:
         memory_free = Column(Integer, nullable=False)
 
     Base.metadata.create_all(engine)
+
+#block to create fourth table required
+table_4_name = "database_table_load_frequency"
+table_4_check = inspection.has_table(table_4_name)
+
+if table_4_check == False:
+    print(f"'{table_4_name}' = missing, attempting to create table.")
+
+    class check_ongoing_processes(Base):
+        __tablename__ = table_4_name
+        timestamp_log = Column(DateTime(timezone=False), server_default=func.now())
+        database_name = Column(String(30), primary_key=True, nullable=False)
+        table_name = Column(String(40), primary_key=True, nullable=False)
+        load_frequency_hours = Column(Integer, nullable=False)
+
+    Base.metadata.create_all(engine)
