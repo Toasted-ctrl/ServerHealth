@@ -4,7 +4,7 @@ import datetime
 from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities, retrieve_remote_server_credentials, retrieve_server_systemload, retrieve_remote_server_list_continuous_processes, retrieve_remote_server_status_continuous_process, retrieve_remote_server_scheduled_reloads, retrieve_remote_server_scheduled_reload_status
 
 #page title
-st.set_page_config(page_title="This is my first page")
+st.set_page_config(page_title="Server status")
 
 st.title("Server overview")
 
@@ -22,10 +22,15 @@ def create_list_active_servers():
 
     if server_identity_dataframe[0] == 200:
 
-        server_dataframe = server_identity_dataframe[2]
-
-        st.dataframe(server_dataframe)
+        server_dataframe = server_identity_dataframe[2]    
         number_of_servers = server_identity_dataframe[1]
+
+        for i in range(number_of_servers):
+
+            server_identity_name = server_dataframe.iloc[i]['server_name']
+            server_identify_ip_address = server_dataframe.iloc[i]['server_ip_address']
+
+            st.text(f"{i}, {server_identity_name}: {server_identify_ip_address}")
 
         for i in range(number_of_servers):
 
