@@ -38,8 +38,8 @@ def create_list_active_servers():
             server_ip_address = server_dataframe.iloc[i]['server_ip_address']
 
             server_ping_check = display_last_ping_response(server_ip_address)
-            server_last_ping_timestamp = server_ping_check[0]
-            server_last_ping_status = server_ping_check[1]
+            server_last_ping_timestamp = server_ping_check[1]
+            server_last_ping_status = server_ping_check[2]
 
             st.divider()
             st.header(f"Server {i}: {server_name}")
