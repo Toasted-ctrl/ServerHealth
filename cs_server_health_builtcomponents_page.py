@@ -29,15 +29,14 @@ def display_last_ping_response(ip_address):
 
     if last_ping_response_df.empty:
 
-        timestamp_log = "Error: Unable to retrieve."
-        ping_pass_fail = "Error: Unable to retrieve."
+        return ([400])
 
     elif not last_ping_response_df.empty:
 
         timestamp_log = last_ping_response_df.iloc[0]['timestamp_log']
         ping_pass_fail = last_ping_response_df.iloc[0]['ping_pass_fail']
 
-    return (timestamp_log, ping_pass_fail)
+        return (200, timestamp_log, ping_pass_fail)
 
 #function to retrieve server identities (name +  IPv4 CIDR address)
 def retrieve_server_identities():
