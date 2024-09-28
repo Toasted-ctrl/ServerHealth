@@ -72,3 +72,22 @@ if table_3_check == False:
         server_port = Column(Integer, nullable=False)
 
     Base.metadata.create_all(engine)
+
+#create fourth required table
+table_4_name = "cs_server_health_api_keys"
+table_4_check = inspection.has_table(table_4_name)
+
+if table_4_check == False:
+    print(f"'{table_4_name}' = missing, attempting to create table.")
+
+    class list_localhost_ongoing_processes(Base):
+        __tablename__ = table_4_name
+        timestamp_added = Column(DateTime(timezone=False), server_default=func.now())
+        api_key = Column(String(32), primary_key=True, unique=True, nullable=False)
+        username = Column(String(15), primary_key=True, nullable=False)
+        access_read = Column(Integer, nullable=False)
+        access_write = Column(Integer, nullable=False)
+        access_update = Column(Integer, nullable=False)
+        access_delete = Column(Integer, nullable=False)
+
+    Base.metadata.create_all(engine)
