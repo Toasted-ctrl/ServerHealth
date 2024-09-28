@@ -216,3 +216,30 @@ def retrieve_remote_server_scheduled_reload_status(remote_hostname, remote_usern
     except:
 
         return([404])
+
+#check api_key access rights
+def retrieve_api_access_rights(api_key):
+
+    sql_retrieve_api_key_records = (f"SELECT * FROM cs_server_health_api_keys WHERE api_key = '{api_key}'")
+
+    api_key_df = pd.read_sql(sql=sql_retrieve_api_key_records, con=engine_local)
+
+    if api_key_df.empty:
+
+        return([400])
+
+    elif not api_key_df.empty:
+
+        api_key_username = api_key_df.iloc[0]['username']
+        api_key_access_read = api_key_df.iloc[0]['access_read']
+        api_key_access_write = api_key_df.iloc[0]['access_write']
+        api_key_access_update = api_key_df.iloc[0]['access_update']
+        api_key_access_delete = api_key_df.iloc[0]['access_delete']
+
+        return(200, api_key_username, api_key_access_read, api_key_access_write, api_key_access_update, api_key_access_delete)
+
+    else:
+
+        return([404])
+
+retrieve_api_access_rights('TEST123456789')
