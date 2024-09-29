@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities, retrieve_server_systemload, retrieve_remote_server_credentials, retrieve_api_access_rights
 
 app = Flask(__name__)
@@ -9,34 +9,89 @@ app = Flask(__name__)
 def remote_server_last_ping_response():
 
     hostname = request.args.get('hostname', None)
+    api_key = request.args.get('api_key', None)
 
-    response = display_last_ping_response(hostname)
+    try:
 
-    ping_status = response[2]
-    ping_timestamp_log = response[1]
+        if api_key == None:
 
-    return jsonify ({'ping_timestamp_log': ping_timestamp_log, 'ping_status': ping_status})
+            return jsonify ({'error': 'missing_api_key'})
+        
+        if not api_key == None:
+
+            api_key_access_rights = retrieve_api_access_rights(api_key)
+
+            if api_key_access_rights[0] == 200:
+
+                if hostname == None:
+
+                    return jsonify ({'error': 'missing_hostname'})
+                
+                elif not hostname == None:
+
+                    remote_server_last_ping_response = display_last_ping_response(hostname)
+
+                    if remote_server_last_ping_response[0] == 200:
+
+                        ping_status = remote_server_last_ping_response[2]
+                        ping_timestamp_log = remote_server_last_ping_response[1]
+
+                        return jsonify ({'ping_timestamp_log': ping_timestamp_log, 'ping_status': ping_status})
+                    
+                    elif remote_server_last_ping_response[0] == 400:
+
+                        return jsonify ({'error': 'empty_dataframe_ping_history'})
+            
+            elif api_key_access_rights[0] == 400: 
+
+                return jsonify ({'error': 'nonexisting_api_key'})
+            
+            elif api_key_access_rights[0] == 404:
+
+                return jsonify ({'error': 'unexpected_error_on_validating_api_key'})
+    
+    except:
+
+        return jsonify ({'error': 'unknown_error'})
 
 @app.route('/remote_server_identities', methods=['get'])
 def remote_server_identities():
 
-    response = retrieve_server_identities()
+    api_key = request.args.get('api_key', None)
 
-    if response[0] == 400:
+    try:
+            
+        if api_key == None:
 
-        return jsonify ({'error': 'empty_dataframe'})
-    
-    elif response[0] == 200:
+            return jsonify ({'error': 'missing_api_key'})
+        
+        if not api_key == None:
+        
+            api_key_access_rights = retrieve_api_access_rights(api_key)
 
-        number_of_servers = response[1]
-        dataframe_server_identities = response[2]
+            if api_key_access_rights[0] == 200:
 
-        server_identities_list = dataframe_server_identities.apply(lambda row: (row['server_name'], row['server_ip_address']), axis=1).tolist()
-        print(server_identities_list)
+                server_identities = retrieve_server_identities()
 
-        return jsonify ({'number_of_servers': number_of_servers, 'server_identities': server_identities_list})
-    
-    else:
+                if server_identities[0] == 400:
+
+                    return jsonify ({'error': 'empty_dataframe'})
+                    
+                elif server_identities[0] == 200:
+
+                    dataframe_server_identities = server_identities[2]
+
+                    return Response (dataframe_server_identities.to_json(orient="records"), mimetype='application/json')
+                
+            elif api_key_access_rights[0] == 400:
+
+                return jsonify ({'error': 'nonexisting_api_key'})
+            
+            elif api_key_access_rights[0] == 404:
+
+                return jsonify ({'error': 'unexpected_error_on_validating_api_key'})
+                
+    except:
 
         return jsonify ({'error': 'unknown_error'})
     
@@ -64,9 +119,7 @@ def remote_server_systemload():
                     
                 elif not hostname == None:
 
-                    retrieve_server_credentials_hostname = (f"{hostname}/32")
-
-                    remote_server_credential_request = retrieve_remote_server_credentials(retrieve_server_credentials_hostname, 'serverhealth_logs')
+                    remote_server_credential_request = retrieve_remote_server_credentials(hostname, 'serverhealth_logs')
 
                     if remote_server_credential_request[0] == 200:
 
