@@ -128,7 +128,7 @@ def retrieve_remote_server_list_continuous_processes(remote_hostname, remote_use
 
         elif not remote_server_listed_processes_df.empty:
 
-            return(200, remote_server_listed_processes_df.shape[0], remote_server_listed_processes_df['process_name'].tolist())
+            return(200, remote_server_listed_processes_df.shape[0], remote_server_listed_processes_df['process_name'].tolist(), remote_server_listed_processes_df)
         
     except:
 
