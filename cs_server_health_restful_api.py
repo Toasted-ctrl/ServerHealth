@@ -1,7 +1,7 @@
 import json
 
 from flask import Flask, jsonify, request, Response
-from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities, retrieve_server_systemload, retrieve_remote_server_credentials, retrieve_api_access_rights, retrieve_remote_server_list_continuous_processes, retrieve_remote_server_status_continuous_process
+from cs_server_health_builtcomponents_page import display_last_ping_response, retrieve_server_identities, retrieve_server_systemload, retrieve_remote_server_credentials, retrieve_api_access_rights, retrieve_remote_server_list_continuous_processes, retrieve_remote_server_status_continuous_process, retrieve_remote_server_scheduled_reloads
 
 app = Flask(__name__)
 
@@ -321,8 +321,75 @@ def remote_server_running_process_status():
 
     except:
 
-        return jsonify ({'error': 'unknown_error'})    
+        return jsonify ({'error': 'unknown_error'})
+    
+@app.route('/remote_server_scheduled_reloads', methods=['get'])
+def remote_server_scheduled_reloads():
 
+    hostname = request.args.get('hostname', None)
+    api_key = request.args.get('api_key', None)
+
+    try:
+
+        if api_key == None:
+
+            return jsonify ({'error': 'missing_api_key'})
+        
+        elif not api_key == None:
+
+            api_key_access_rights = retrieve_api_access_rights(api_key)
+
+            if api_key_access_rights[0] == 400:
+
+                return jsonify ({'error': 'invalid_api_key'})
+            
+            elif api_key_access_rights[0] == 404:
+
+                return jsonify ({'error': 'error_on_validiting_api_key'})
+            
+            elif api_key_access_rights[0] == 200:
+
+                if hostname == None:
+
+                    return jsonify ({'error': 'missing_hostname'})
+                
+                elif not hostname == None:
+
+                    remote_server_credentials = retrieve_remote_server_credentials(hostname, 'serverhealth_logs')
+
+                    if remote_server_credentials[0] == 400:
+
+                        return jsonify ({'error': 'empty_dataframe_credentials'})
+                    
+                    elif remote_server_credentials[0] == 404:
+
+                        return jsonify ({'error': 'unexpected_error_on_remote_server_credential_retrieval'})
+                    
+                    elif remote_server_credentials[0] == 200:
+
+                        remote_server_username = remote_server_credentials[2]
+                        remote_server_password = remote_server_credentials[3]
+                        remote_server_port = remote_server_credentials[4]
+
+                        remote_server_scheduled_reloads_response = retrieve_remote_server_scheduled_reloads(hostname, remote_server_username, remote_server_password, 'serverhealth_logs', remote_server_port)
+
+                        if remote_server_scheduled_reloads_response[0] == 400:
+
+                            return jsonify ({'error': 'empty_dataframe_scheduled_reloads'})
+                        
+                        elif remote_server_scheduled_reloads_response[0] == 404:
+
+                            return jsonify ({'error': 'unexpected_error_on_retrieving_scheduled_reload_list'})
+                        
+                        elif remote_server_scheduled_reloads_response[0] == 200:
+
+                            remote_server_scheduled_reloads_df = remote_server_scheduled_reloads_response[2]
+
+                            return Response (remote_server_scheduled_reloads_df.to_json(orient="records"), mimetype='application/json')
+
+    except:
+
+        return jsonify ({'error': 'unknown_error'})
 
 if __name__ == '__main__':
     app.run()
