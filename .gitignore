@@ -6,6 +6,7 @@ __pycache__/
 
 #python test files
 Test.py
+Test2.py
 
 #sh files
 run_pingserver.sh
