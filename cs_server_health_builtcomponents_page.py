@@ -241,5 +241,3 @@ def retrieve_api_access_rights(api_key):
     else:
 
         return([404])
-
-retrieve_api_access_rights('TEST123456789')
