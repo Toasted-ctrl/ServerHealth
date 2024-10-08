@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 
 from flask import Flask, jsonify, request, Response
@@ -483,4 +485,4 @@ def remote_server_scheduled_reloads_status():
         return jsonify ({'error': 'unknown_error'})
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
