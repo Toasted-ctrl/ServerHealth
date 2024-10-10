@@ -477,7 +477,7 @@ def remote_server_scheduled_reloads_status():
                                         number_of_entries = remote_server_scheduled_reloads_status_response[1]
                                         last_reload_datetime = remote_server_scheduled_reloads_status_response[2]
 
-                                        return jsonify ({'last_reload_timestamp': number_of_entries, 'rows_added': last_reload_datetime})
+                                        return jsonify ({'last_reload_timestamp': last_reload_datetime, 'rows_added': number_of_entries})
 
 
     except:
