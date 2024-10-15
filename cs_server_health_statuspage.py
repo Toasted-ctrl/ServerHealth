@@ -30,6 +30,7 @@ st.title("Server overview")
 date_of_retrieving_server_identities = datetime.datetime.now()
 st.text(f"Date: {date_of_retrieving_server_identities}")
 
+@st.cache_data(ttl=60)
 def create_list_active_servers():
 
     request_remote_server_identities_url = (f"{api_link}{extension_remote_server_identities}")
